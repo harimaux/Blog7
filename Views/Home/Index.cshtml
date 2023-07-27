@@ -1,0 +1,28 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+<div class="homeMain">
+    <div class="container">
+        <div class="row pt-5">
+            <div class="col-lg-6">
+                <h1>Blog Space</h1>
+                <p>
+                    Welcome to this demo website. Experience the power of ASP.NET .NET6 with the rich content editor, enabling you to create captivating posts with images, videos, and more. Please avoid using real addresses while creating an account, as this demo is for illustrative purposes only. Enjoy crafting and browsing visually stunning content!
+                </p>
+                <a class="btn btn-primary bg-gradient" asp-area="Identity" asp-page="/Account/Register">Join Blog Space</a>
+            </div>
+        </div>
+    </div>
+
+@*    <form asp-action="Upload" enctype="multipart/form-data">
+        <div>
+            <label for="title">Title:</label>
+            <input type="text" id="title" name="title" required />
+        </div>
+        <div>
+            <label for="image">Image:</label>
+            <input type="file" id="image" name="image" required accept="image/*" />
+        </div>
+        <button type="submit">Upload</button>
+    </form>*@
+</div>

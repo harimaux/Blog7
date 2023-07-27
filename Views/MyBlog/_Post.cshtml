@@ -1,0 +1,42 @@
+﻿@model Blog7.Models.MainVM
+
+
+<div class="fr-wrapper displayPostCustomBox">
+
+    <div class="fr-element fr-view">
+
+        <div class="d-flex justify-content-between rounded-1 bg-dark bg-gradient text-light p-2">
+
+            <h3>@Model.Post.Title</h3>
+
+            <div class="d-flex displayPostCustomHeader">
+
+                <div class="mx-3 displayPostCustomDate">Created: @Model.Post.CreatedAt</div>
+
+                <span data-value="@Model.Post.Id" class="material-symbols-outlined displayPostCustomDeletePost">
+                    delete
+                </span>
+
+                <div class="displayPostCustomDeletePostConfirmBox">
+
+                    <div class="acceptDeletePost">
+                        <span class="material-symbols-outlined">
+                            done
+                        </span>
+                    </div>
+
+                    <div class="cancelDeletePost">
+                        <span class="material-symbols-outlined">
+                            close
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-5">
+            @Html.Raw(Model.Post.Content)
+        </div>
+
+    </div>
+</div>

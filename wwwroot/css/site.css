@@ -44,15 +44,16 @@ body {
 
 /* ------------------- NAVIGATION ------------------- */
 
+.navAvatar {
+    width: 40px;
+    margin-right: 10px;
+    border: 3px solid var(--white);
+    border-radius: 2px;
+}
 
 /* ------------------- BUTTONS ------------------- */
-
-
 /* ------------------- FOOTER ------------------- */
-
-
 /* ------------------- PRIVACY POLICY ------------------- */
-
 .privacyPolicyText {
     min-height: 100vh;
     background-image: url("/Images/Privacy/privacy246211323.jpg");
@@ -220,7 +221,7 @@ body {
     background-position: center center;
 }
 
-/* ------------------- RICH TEXT LIVBRARY ------------------- */
+/* ------------------- RICH TEXT LIBRARY ------------------- */
 
 #fr-logo {
     display: none;
@@ -233,26 +234,35 @@ body {
     border: 1px solid #ced4da !important;
 }
 
-    .select2-selection textarea {
-        margin-top: 0px !important;
-        transform: translateY(-5px);
-    }
+.select2-selection textarea {
+    margin-top: 0px !important;
+    transform: translateY(-5px);
+}
 
-    .select2-selection li {
-        margin-top: 0px !important;
-    }
+.select2-selection li {
+    margin-top: 0px !important;
+}
 
 /* ------------------- AVATAR ------------------- */
 
 .avImageBox {
 }
 
-    .avImageBox img {
-        cursor: pointer;
-    }
+.avImageBox img {
+    cursor: pointer;
+}
 
 .pickAv {
 }
+
+.activeLinkBackground a:active {
+    background-color: var(--bootstrapLightGrey);
+}
+
+.activeLinkBackground nav-link,active {
+    background-color: red !important;
+}
+
 
 /*.avatarChooseModalBackground {
     width: 100%;

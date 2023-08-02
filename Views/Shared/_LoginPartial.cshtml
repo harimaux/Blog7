@@ -1,9 +1,19 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @using BlogService
+@using Blog7.Models
+@using BlogService.Data
+
 @inject SignInManager<AppUser> SignInManager
 @inject UserManager<AppUser> UserManager
+@inject IHttpContextAccessor httpContextAccessor
+@inject ApplicationDbContext dbContext
+
+@{
+    var userAvatar = new UserAvatar(UserManager, SignInManager, httpContextAccessor, dbContext);
+}
 
 <ul class="navbar-nav ms-auto">
+
 @if (SignInManager.IsSignedIn(User))
 {
     <li class="nav-item">
@@ -13,7 +23,11 @@
         <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
     </li>
     <li class="nav-item">
-        <a  class="nav-link" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @User.Identity?.Name!</a>
+        <a  class="nav-link" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @User.Identity?.Name</a>
+    </li>
+    <li>
+        @*<partial name="_UserAvatar" />*@
+        @await Html.PartialAsync("_UserAvatar", userAvatar)
     </li>
     <li class="nav-item">
         <form  class="d-flex" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">

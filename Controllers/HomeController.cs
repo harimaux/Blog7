@@ -39,5 +39,33 @@ namespace Blog7.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
+
+
+        [HttpPost]
+        public async Task<IActionResult> Upload(StockAvatars model, IFormFile image)
+        {
+            if (ModelState.IsValid)
+            {
+                if (image != null && image.Length > 0)
+                {
+                    using (var ms = new MemoryStream())
+                    {
+                        image.CopyTo(ms);
+                        model.ImageBase64 = Convert.ToBase64String(ms.ToArray());
+                    }
+                }
+
+                _dbContext.Add(model);
+                await _dbContext.SaveChangesAsync();
+
+                return RedirectToAction("Index"); // Redirect to a page showing all uploaded images.
+            }
+
+            return View(model);
+        }
+
+
+
     }
 }

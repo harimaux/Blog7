@@ -10,6 +10,11 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using BlogService;
+using BlogService.Data;
+using System.Security.Claims;
+using Blog7.Models;
+using Microsoft.EntityFrameworkCore;
+using BlogService.DBmodels;
 
 namespace Blog7.Areas.Identity.Pages.Account.Manage
 {
@@ -17,14 +22,52 @@ namespace Blog7.Areas.Identity.Pages.Account.Manage
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
+        private readonly ApplicationDbContext _dbContext;
+
+        public string StockAvatarId { get; set; }
+        public string CustomAvatarImage { get; set; }
+
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         public IndexModel(
             UserManager<AppUser> userManager,
-            SignInManager<AppUser> signInManager)
+            SignInManager<AppUser> signInManager,
+            IHttpContextAccessor httpContextAccessor,
+            ApplicationDbContext dbContext)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _httpContextAccessor = httpContextAccessor;
+            _dbContext = dbContext;
+
+
+            LoadAvatarInformation();
         }
+
+
+
+
+        private void LoadAvatarInformation()
+        {
+
+            var userId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var userExtraContentDB = _dbContext.UserExtraStuff.FirstOrDefault(x => x.UserId == userId);
+
+            var userAvatar = this as UserAvatar;
+
+
+            if (userExtraContentDB.StockAvatarId != null && userAvatar != null)
+            {
+                var imageId = userExtraContentDB.StockAvatarId;
+                var stockAvatar = _dbContext.StockAvatars.FirstOrDefault(x => x.Id.ToString() == imageId);
+
+                userAvatar.AvatarImage = stockAvatar.ImageBase64;
+            }
+
+        }
+
+
 
         /// <summary>
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used

@@ -25,23 +25,25 @@
 
 <h3>Your avatar</h3>
 
-<form method="post" enctype="multipart/form-data">
-    <div class="container">
-        <div class="row stockAvatarsBox">
 
-            @if (Model.Mv != null && Model.Mv.StockAvatars != null)
+<div class="container">
+
+    <div class="row stockAvatarsBox">
+
+        @if (Model.Mv != null && Model.Mv.StockAvatars != null)
+        {
+            foreach (var item in Model.Mv.StockAvatars)
             {
-                foreach (var item in Model.Mv.StockAvatars)
-                {
-                    <div class="col-6 col-sm-4 col-md-2 avImageBox">
-                        <img src="data:image/png;base64,@item.ImageBase64" class="img-fluid mb-3 shadow-lg stockAvatar" data-value="@item.Id" alt="Avatar">
-                    </div>
-                }
+                <div class="col-6 col-sm-4 col-md-2 avImageBox">
+                    <img src="data:image/png;base64,@item.ImageBase64" class="img-fluid mb-3 shadow-lg stockAvatar" data-value="@item.Id" alt="Avatar">
+                </div>
             }
+        }
 
-        </div>
+    </div>
 
-        <!-- Input for uploading a custom avatar -->
+    <form method="post" enctype="multipart/form-data" asp-page-handler="UploadAvatar">
+
         <div class="row mt-4">
             <div class="col-12">
                 <label for="customAvatar">Upload Custom Avatar:</label>
@@ -54,8 +56,11 @@
                 <button type="submit" class="btn btn-success">Upload Avatar</button>
             </div>
         </div>
-    </div>
-</form>
+
+    </form>
+
+</div>
+
 
 
 @section Scripts {

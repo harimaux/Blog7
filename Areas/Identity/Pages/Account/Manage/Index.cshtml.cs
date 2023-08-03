@@ -44,30 +44,28 @@ namespace Blog7.Areas.Identity.Pages.Account.Manage
             LoadAvatarInformation();
         }
 
-
-
-
         private void LoadAvatarInformation()
         {
-
             var userId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            var userExtraContentDB = _dbContext.UserExtraStuff.FirstOrDefault(x => x.UserId == userId);
-
-            var userAvatar = this as UserAvatar;
-
-
-            if (userExtraContentDB.StockAvatarId != null && userAvatar != null)
+            if (userId != null)
             {
-                var imageId = userExtraContentDB.StockAvatarId;
-                var stockAvatar = _dbContext.StockAvatars.FirstOrDefault(x => x.Id.ToString() == imageId);
+                var userExtraContentDB = _dbContext.UserExtraStuff.FirstOrDefault(x => x.UserId == userId);
 
-                userAvatar.AvatarImage = stockAvatar.ImageBase64;
+                if (userExtraContentDB != null && userExtraContentDB.StockAvatarId != null && this is UserAvatar userAvatar)
+                {
+                    var imageId = userExtraContentDB.StockAvatarId;
+                    var stockAvatar = _dbContext.StockAvatars.FirstOrDefault(x => x.Id.ToString() == imageId);
+
+                    userAvatar.AvatarImage = stockAvatar.ImageBase64;
+                }
+                else if (userExtraContentDB != null && userExtraContentDB.CustomAvatarImage != null && this is UserAvatar userCustomAvatar)
+                {
+                    userCustomAvatar.AvatarImage = userExtraContentDB.CustomAvatarImage;
+                }
             }
 
         }
-
-
 
         /// <summary>
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used

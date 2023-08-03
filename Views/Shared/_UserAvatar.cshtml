@@ -3,4 +3,11 @@
 
 @model UserAvatar
 
-<img class="navAvatar" src="data:image/png;base64,@Model.AvatarImage" data-value="" alt="Avatar">
+@if(Model.AvatarImage != null)
+{
+    <img class="navAvatar" src="data:image/png;base64,@Model.AvatarImage" data-value="" alt="Avatar">
+}
+else
+{
+    <img class="navAvatar" src="~/Images/User/no-avatar-image.jpg" />
+}

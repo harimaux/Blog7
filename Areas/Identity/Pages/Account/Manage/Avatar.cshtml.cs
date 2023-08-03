@@ -2,6 +2,8 @@ using Blog7.Models;
 using BlogService;
 using BlogService.Data;
 using BlogService.DBmodels;
+using ImageMagick;
+using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -51,6 +53,7 @@ namespace Blog7.Areas.Identity.Pages.Account.Manage
                 {
                     Vm.StockAvatarId = avatarId.ToString();
                     Vm.UserId = userId;
+                    Vm.CustomAvatarImage = null;
 
                     _dbContext.UserExtraStuff.Add(Vm);
                     _dbContext.SaveChanges();
@@ -58,6 +61,7 @@ namespace Blog7.Areas.Identity.Pages.Account.Manage
                 else
                 {
                     userExtraContentDB.StockAvatarId = avatarId.ToString();
+                    userExtraContentDB.CustomAvatarImage = null;
 
                     _dbContext.UserExtraStuff.Update(userExtraContentDB);
                     _dbContext.SaveChanges();
@@ -69,13 +73,55 @@ namespace Blog7.Areas.Identity.Pages.Account.Manage
 
         public IActionResult OnPostUploadAvatar(IFormFile customAvatar)
         {
-            // This handler will be executed when the "Upload Avatar" button is clicked
-            // in the second form.
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            // Use the customAvatar parameter to access the uploaded file.
-            // For example, you can save the file to a specific location or database.
+            var fileStream = customAvatar.OpenReadStream();
+            var image = new MagickImage(fileStream);
 
-            // Perform your logic here.
+            int targetWidth = 300;
+            int targetHeight = 300;
+
+            double targetAspectRatio = (double)targetWidth / targetHeight;
+            double originalAspectRatio = (double)image.Width / image.Height;
+
+            if (originalAspectRatio > targetAspectRatio)
+            {
+                // Crop horizontally
+                int cropWidth = (int)Math.Round(image.Height * targetAspectRatio);
+                int x = (image.Width - cropWidth) / 2;
+                int y = 0;
+                image.Crop(new MagickGeometry(x, y, cropWidth, image.Height));
+            }
+            else
+            {
+                // Crop vertically
+                int cropHeight = (int)Math.Round(image.Width / targetAspectRatio);
+                int x = 0;
+                int y = (image.Height - cropHeight) / 2;
+                image.Crop(new MagickGeometry(x, y, image.Width, cropHeight));
+            }
+
+            image.Resize(targetWidth, targetHeight);
+
+            // Convert the modified image to Base64
+            string base64Image;
+            using (MemoryStream memoryStream = new MemoryStream())
+            {
+                image.Write(memoryStream);
+                base64Image = Convert.ToBase64String(memoryStream.ToArray());
+            }
+
+            var userExtraContentDB = _dbContext.UserExtraStuff?.FirstOrDefault(x => x.UserId == userId);
+
+            if (userExtraContentDB != null)
+            {
+                userExtraContentDB.CustomAvatarImage = base64Image;
+                userExtraContentDB.StockAvatarId = null;
+
+                _dbContext.UserExtraStuff?.Update(userExtraContentDB);
+                _dbContext.SaveChanges();
+            }
+
 
             return RedirectToPage("Avatar");
         }

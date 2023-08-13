@@ -1,5 +1,6 @@
 ﻿@using Newtonsoft.Json;
 @using Newtonsoft.Json.Linq;
+@using System.Globalization;
 @model Blog7.Models.MainVM
 
 
@@ -74,11 +75,29 @@
 
                         <div class="d-flex justify-content-between rounded-1 bg-dark bg-gradient text-light p-2">
 
-                            <h3>@post.Title</h3>
+                            <div>
 
-                            <div class="d-flex displayPostCustomHeader">
+                                <h3>@post.Title</h3>
 
-                                <div class="mx-3 displayPostCustomDate">Created: @post.CreatedAt</div>
+                                <div class="d-flex">
+                                    @*<p>Category:&nbsp;</p>*@
+                                    @if (Model.PostCategory != null && !string.IsNullOrEmpty(post.Category))
+                                    {
+                                        var categoryIds = post.Category.Split(',').Select(id => id.Trim());
+                                        foreach (var item in Model.PostCategory)
+                                        {
+                                            if (categoryIds.Contains(item.Id.ToString()))
+                                            {
+                                                <p class="text-decoration-underline">@item.CategoryName&nbsp;&nbsp;</p>
+                                            }
+                                        }
+                                    }
+                                </div>
+                                
+                            </div>
+
+                            <div class="d-flex">
+                                <div class="mx-3 displayPostCustomDate">@post.CreatedAt.ToString("dd MMM yyyy - HH:mm")</div>
 
                                 <span data-value="@post.Id" class="material-symbols-outlined displayPostCustomDeletePost">
                                     delete
@@ -98,7 +117,9 @@
                                         </span>
                                     </div>
                                 </div>
+
                             </div>
+
                         </div>
 
                         <div class="mt-5">
@@ -139,6 +160,7 @@
                                 </a>
                             </li>
                         }
+
                     </ul>
                 </nav>
             }
@@ -323,7 +345,7 @@
                         // Scroll to post after a short delay to allow time for rendering
                         setTimeout(function () {
                             let firstPostInList = document.querySelector('.displayPostCustomBox');
-                            firstPostInList.scrollIntoView({ behavior: "smooth", block: "start", inline: "nearest" });
+                            firstPostInList.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" });
                         }, 100);
                     } catch (error) {
                          alert(error)

@@ -29,11 +29,28 @@ namespace Blog7.Areas.Identity.Pages.Account.Manage
         {
             // Pass the ApplicationDbContext to MainVM's constructor
             Mv = new MainVM();
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             if (_dbContext.StockAvatars != null)
             {
                 Mv.StockAvatars = _dbContext.StockAvatars.ToList();
             }
+
+            if(_dbContext.UserExtraStuff != null)
+            {
+                var userExtraContentDB = _dbContext.UserExtraStuff.FirstOrDefault(x => x.UserId == userId);
+
+                if (userExtraContentDB != null && userExtraContentDB.CustomAvatarImage != null)
+                {
+                    Mv.UserExtraStuff.CustomAvatarImage = userExtraContentDB.CustomAvatarImage;
+                }
+                else if(userExtraContentDB != null && userExtraContentDB.StockAvatarId != null)
+                {
+                    var stockAvatar = _dbContext.StockAvatars?.FirstOrDefault(x => x.Id.ToString() == userExtraContentDB.StockAvatarId);
+                    Mv.UserExtraStuff.CustomAvatarImage = stockAvatar?.ImageBase64;
+                }
+            }
+            
 
             ViewData["Title"] = "Avatar Page";
 
@@ -73,6 +90,14 @@ namespace Blog7.Areas.Identity.Pages.Account.Manage
 
         public IActionResult OnPostUploadAvatar(IFormFile customAvatar)
         {
+
+            if (customAvatar == null)
+            {
+                ViewData["ErrorMessage"] = "Please select an avatar to upload.";
+
+                return OnGet();
+            }
+
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             var fileStream = customAvatar.OpenReadStream();
@@ -111,15 +136,28 @@ namespace Blog7.Areas.Identity.Pages.Account.Manage
                 base64Image = Convert.ToBase64String(memoryStream.ToArray());
             }
 
-            var userExtraContentDB = _dbContext.UserExtraStuff?.FirstOrDefault(x => x.UserId == userId);
-
-            if (userExtraContentDB != null)
+            if(_dbContext.UserExtraStuff != null)
             {
-                userExtraContentDB.CustomAvatarImage = base64Image;
-                userExtraContentDB.StockAvatarId = null;
+                var userExtraContentDB = _dbContext.UserExtraStuff.FirstOrDefault(x => x.UserId == userId);
 
-                _dbContext.UserExtraStuff?.Update(userExtraContentDB);
-                _dbContext.SaveChanges();
+                if (userExtraContentDB == null)
+                {
+                    var Vm = new UserExtraStuff();
+
+                    Vm.CustomAvatarImage = base64Image;
+                    Vm.UserId = userId;
+
+                    _dbContext.UserExtraStuff.Add(Vm);
+                    _dbContext.SaveChanges();
+                }
+                else
+                {
+                    userExtraContentDB.CustomAvatarImage = base64Image;
+                    userExtraContentDB.StockAvatarId = null;
+
+                    _dbContext.UserExtraStuff.Update(userExtraContentDB);
+                    _dbContext.SaveChanges();
+                }
             }
 
 

@@ -92,6 +92,12 @@ namespace Blog7.Controllers
 
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
+            //Get post categories
+            if (userId != null && _dbContext.PostCategory != null)
+            {
+                vm.PostCategory = _dbContext.PostCategory.ToList();
+            }
+
             var newPost = new Post
             {
                 Title = formData.Title,

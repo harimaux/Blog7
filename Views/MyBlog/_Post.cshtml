@@ -7,11 +7,26 @@
 
         <div class="d-flex justify-content-between rounded-1 bg-dark bg-gradient text-light p-2">
 
-            <h3>@Model.Post.Title</h3>
+            <div>
+                <h3>@Model.Post.Title</h3>
+
+                @if (Model.PostCategory != null && !string.IsNullOrEmpty(Model.Post.Category))
+                {
+                    var categoryIds = Model.Post.Category.Split(',').Select(x => x.Trim());
+                    foreach (var item in Model.PostCategory)
+                    {
+                        if (categoryIds.Contains(item.Id.ToString()))
+                        {
+                            <p class="text-decoration-underline">@item.CategoryName&nbsp;&nbsp;</p>
+                        }
+                    }
+                }
+
+            </div>
 
             <div class="d-flex displayPostCustomHeader">
 
-                <div class="mx-3 displayPostCustomDate">Created: @Model.Post.CreatedAt</div>
+                <div class="mx-3 displayPostCustomDate">@Model.Post.CreatedAt.ToString("dd MMM yyyy - HH:mm")</div>
 
                 <span data-value="@Model.Post.Id" class="material-symbols-outlined displayPostCustomDeletePost">
                     delete
@@ -30,8 +45,11 @@
                             close
                         </span>
                     </div>
+
                 </div>
+
             </div>
+
         </div>
 
         <div class="mt-5">

@@ -13,13 +13,17 @@
                 @if (Model.PostCategory != null && !string.IsNullOrEmpty(Model.Post.Category))
                 {
                     var categoryIds = Model.Post.Category.Split(',').Select(x => x.Trim());
-                    foreach (var item in Model.PostCategory)
-                    {
-                        if (categoryIds.Contains(item.Id.ToString()))
+
+                    <div class="d-flex">
+                        @foreach (var item in Model.PostCategory)
                         {
-                            <p class="text-decoration-underline">@item.CategoryName&nbsp;&nbsp;</p>
+                            if (categoryIds.Contains(item.Id.ToString()))
+                            {
+                                <p>@item.CategoryName&nbsp;&nbsp;</p>
+                            }
                         }
-                    }
+                    </div>
+
                 }
 
             </div>

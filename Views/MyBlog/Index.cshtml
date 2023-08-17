@@ -68,66 +68,7 @@
         {
             @foreach (var post in Model.PostsList)
             {
-                @*<hr class="m-5">*@
-                <div class="fr-wrapper displayPostCustomBox">
-
-                    <div class="fr-element fr-view">
-
-                        <div class="d-flex justify-content-between rounded-1 bg-dark bg-gradient text-light p-2">
-
-                            <div>
-
-                                <h3>@post.Title</h3>
-
-                                <div class="d-flex">
-                                    @*<p>Category:&nbsp;</p>*@
-                                    @if (Model.PostCategory != null && !string.IsNullOrEmpty(post.Category))
-                                    {
-                                        var categoryIds = post.Category.Split(',').Select(id => id.Trim());
-                                        foreach (var item in Model.PostCategory)
-                                        {
-                                            if (categoryIds.Contains(item.Id.ToString()))
-                                            {
-                                                <p class="text-decoration-underline">@item.CategoryName&nbsp;&nbsp;</p>
-                                            }
-                                        }
-                                    }
-                                </div>
-                                
-                            </div>
-
-                            <div class="d-flex">
-                                <div class="mx-3 displayPostCustomDate">@post.CreatedAt.ToString("dd MMM yyyy - HH:mm")</div>
-
-                                <span data-value="@post.Id" class="material-symbols-outlined displayPostCustomDeletePost">
-                                    delete
-                                </span>
-
-                                <div class="displayPostCustomDeletePostConfirmBox">
-
-                                    <div class="acceptDeletePost">
-                                        <span class="material-symbols-outlined">
-                                            done
-                                        </span>
-                                    </div>
-
-                                    <div class="cancelDeletePost">
-                                        <span class="material-symbols-outlined">
-                                            close
-                                        </span>
-                                    </div>
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                        <div class="mt-5">
-                            @Html.Raw(post.Content)
-                        </div>
-
-                    </div>
-                </div>
+                <partial name="_Post" model="new MainVM { Post = post, PostCategory = Model.PostCategory }" />
             }
 
             @if (Model.TotalPages > 1)

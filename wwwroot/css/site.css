@@ -271,4 +271,15 @@ body {
     }
 }
 
+.activeLinkBackground .nav-link.active {
+    background-color: gray !important;
+}
 
+.activeLinkBackground a {
+    color: gray;
+}
+
+.activeLinkBackground a:hover {
+    font-weight: 600;
+    color: var(--dark);
+}

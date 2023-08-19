@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using Blog7.Models;
 using BlogService.DBmodels;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Blog7.Controllers
 {
@@ -123,6 +124,7 @@ namespace Blog7.Controllers
             {
                 var post = await _dbContext.Posts.FindAsync(postId);
 
+
                 if (post == null)
                 {
                     return NotFound(); // Or any appropriate error response
@@ -137,5 +139,80 @@ namespace Blog7.Controllers
 
             return RedirectToAction("Index");
         }
+
+
+
+
+
+        [Authorize]
+        public IActionResult Edit(int editId)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var vm = new MainVM();
+
+            //Get post categories
+            if (userId != null && _dbContext.PostCategory != null)
+            {
+                vm.PostCategory = _dbContext.PostCategory.ToList();
+            }
+
+            if (_dbContext.Posts != null)
+            {
+                var userPosts = _dbContext.Posts.Where(x => x.OwnerId == userId).ToList();
+
+                foreach (var post in userPosts)
+                {
+                    if(post.Id == editId)
+                    {
+                        vm.Post.Id = post.Id;
+                        vm.Post.CreatedAt = post.CreatedAt;
+                        vm.Post.Category = post.Category;
+                        vm.Post.Content = post.Content;
+                        vm.Post.OwnerId = post.OwnerId;
+                        vm.Post.Title = post.Title;
+                    }
+                }
+            }
+
+                return View(vm);
+        }
+
+
+        
+        [HttpPost]
+        public async Task<IActionResult> SaveEditedPost(TextEditor formData, int id)
+        {
+            var vm = new MainVM();
+
+            if (!ModelState.IsValid)
+            {
+                // Model is not valid, return the form with validation errors
+                return PartialView("PostError", formData);
+            }
+
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (_dbContext.Posts != null)
+            {
+                var userPosts = _dbContext.Posts.Where(x => x.OwnerId == userId).ToList();
+
+                var postToEdit = userPosts.Where(x => x.Id == id).First();
+
+                postToEdit.Title = formData.Title;
+                postToEdit.Category = string.Join(",", formData.Category ?? Array.Empty<string>());
+                postToEdit.Content = formData.RichContent;
+                postToEdit.OwnerId = userId;
+
+                _dbContext.Posts!.Update(postToEdit);
+                await _dbContext.SaveChangesAsync();
+
+            }
+
+            return RedirectToAction("Index");
+        }
+
+
+
+
     }
 }

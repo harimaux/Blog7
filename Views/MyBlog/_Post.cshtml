@@ -28,28 +28,39 @@
 
             </div>
 
-            <div class="d-flex displayPostCustomHeader">
+            <div class="d-flex">
 
-                <div class="mx-3 displayPostCustomDate">@Model.Post.CreatedAt.ToString("dd MMM yyyy - HH:mm")</div>
+                <div class="mx-3">@Model.Post.CreatedAt.ToString("dd MMM yyyy - HH:mm")</div>
 
-                <span data-value="@Model.Post.Id" class="material-symbols-outlined displayPostCustomDeletePost">
-                    delete
-                </span>
-
-                <div class="displayPostCustomDeletePostConfirmBox">
-
-                    <div class="acceptDeletePost">
-                        <span class="material-symbols-outlined">
-                            done
+                <div>
+                    <a href="@Url.Action("Edit", new { editId = @Model.Post.Id })" style="color: #F8F9FA">
+                        <span class="material-symbols-outlined me-1" role="button">
+                            edit
                         </span>
-                    </div>
+                    </a>
+                </div>
 
-                    <div class="cancelDeletePost">
-                        <span class="material-symbols-outlined">
-                            close
-                        </span>
-                    </div>
+                <div class="d-flex align-items-start">
 
+                    <span data-value="@Model.Post.Id" class="material-symbols-outlined displayPostCustomDeletePost">
+                        delete
+                    </span>
+
+                    <div class="displayPostCustomDeletePostConfirmBox">
+
+                        <div class="acceptDeletePost">
+                            <span class="material-symbols-outlined">
+                                done
+                            </span>
+                        </div>
+
+                        <div class="cancelDeletePost">
+                            <span class="material-symbols-outlined">
+                                close
+                            </span>
+                        </div>
+
+                    </div>
                 </div>
 
             </div>

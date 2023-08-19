@@ -1,0 +1,101 @@
+﻿@model Blog7.Models.MainVM
+
+<div class="myBlogSpaceMain container mt-5 mb-5 pb-2 pt-2 rounded-3 border" style="background-color: rgb(240, 240, 240)">
+
+    <h1>Edit Post</h1>
+
+@*    <div id="partialViewContainer">
+        <partial name="_Post" />
+    </div>*@
+
+    <form method="POST" class="mb-5" asp-action="SaveEditedPost" enctype="multipart/form-data">
+
+        <input type="hidden" name="id" value="@Model.Post.Id"/>
+
+        <div asp-validation-summary="ModelOnly" class="text-danger"> </div>
+
+        <!-- title input -->
+
+        <div class="form-outline mb-2">
+            <label class="form-label labelTitle" asp-for="TextEditor.Title"></label>
+            <div>
+                <input asp-for="TextEditor.Title" name="Title" class="form-control inputTitle" value="@Model.Post.Title"/>
+                <span asp-validation-for="TextEditor.Title" class="text-danger"></span>
+            </div>
+        </div>
+
+        <!-- category select -->
+
+        <div class="form-outline mb-3">
+            <label class="form-label labelCategory" asp-for="TextEditor.Category"></label>
+            <div class="selectCategory">
+                <select class="form-select SELECTmulti" name="Category" multiple>
+
+                    @if (Model.PostCategory != null && Model.Post.Category != null)
+                    {
+                        var categoryIds = Model.Post.Category.Split(',').Select(x => x.Trim());
+
+                        @foreach (var item in Model.PostCategory)
+                        {
+                            if (categoryIds.Contains(item.Id.ToString()))
+                            {
+                                <option value="@item.Id" selected>@item.CategoryName</option>
+                            }
+                            else
+                            {
+                                <option value="@item.Id">@item.CategoryName</option>
+                            }
+                            
+                        }
+                    }
+
+                </select>
+
+                <span asp-validation-for="TextEditor.Category" class="text-danger"></span>
+            </div>
+        </div>
+
+        <!-- body input -->
+
+        <div class="form-outline mb-4">
+            <label class="form-label labelEditor" asp-for="TextEditor.RichContent">Your Post</label>
+            <div class="textareaEditor">
+                <textarea id="richTextEditorEdit" name="richContent" asp-for="TextEditor.RichContent" class="form-control"></textarea>
+                <span asp-validation-for="TextEditor.RichContent" class="text-danger"></span>
+            </div>
+        </div>
+
+
+        <div>
+            <button type="Submit" class="btn btn-success bg-gradient">Edit Post</button>
+        </div>
+
+    </form>
+
+</div>
+
+@section Scripts{
+
+    <script src="/js/SaveDeleteEditPost.js"></script>
+
+    <script>
+
+        //FROALA rich text editor
+        //let editorEditView = new FroalaEditor('#richTextEditorEdit', {
+        //    //heightMin: 300,
+        //    editorEditView.html.insert('foo bar', true);
+        //});
+
+        var editorInEditView = new FroalaEditor('#richTextEditorEdit', {}, function () {
+
+            // Call the method inside the initialized event.
+
+            let contentData = `@Html.Raw(Model.Post.Content)`;
+
+            editorInEditView.html.insert(contentData, true);
+
+        });
+
+    </script>
+
+}

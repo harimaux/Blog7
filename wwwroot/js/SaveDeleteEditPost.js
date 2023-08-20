@@ -1,16 +1,4 @@
-﻿//FROALA rich text editor
-let editor = new FroalaEditor('#richTextEditor', {
-    heightMin: 300,
-
-});
-
-
-//Way of adding values in code
-//editor.opts.height = 200;
-//editor.size.refresh();
-
-
-//SELECT2
+﻿//SELECT2
 $(document).ready(function () {
     $('.SELECTmulti').select2({
         //placeholder: "Select category..",
@@ -51,8 +39,6 @@ let deleteButtons = document.querySelectorAll('.displayPostCustomDeletePost');
 var form = document.querySelector('.sendPostForm');
 form.onsubmit = async function (e) {
 
-    console.log("Run")
-
     e.preventDefault();
 
     $(".postEmptyErrorBox").remove();
@@ -60,6 +46,7 @@ form.onsubmit = async function (e) {
     const postTitle = document.querySelector('input[name=Title]').value;
     const category = $('.SELECTmulti').select2("val");
     const richTextContent = document.querySelector('textarea[name=richContent]').value;
+    const id = document.querySelector('input[name=id]').value;
 
     //Errors on empty input
     if (postTitle == "") {
@@ -137,7 +124,22 @@ form.onsubmit = async function (e) {
     const formData = new FormData();
     formData.append('RichContent', updatedContentWithBase64);
     formData.append('Title', postTitle);
-    formData.append('Category', category)
+    formData.append('Category', category);
+    formData.append('id', id);
+
+
+    let byteLength = new TextEncoder().encode(updatedContentWithBase64).length;
+    let kilobyteSize = byteLength / 1024;
+
+    console.log(`Size: ${kilobyteSize.toFixed(2)} KB`);
+
+    if (kilobyteSize > 5000) {
+        labelEditor.innerHTML = "Content is too large. Max size 5MB.";
+        labelEditor.style.color = "red";
+        labelEditor.scrollIntoView({ behavior: "smooth", block: "end", inline: "nearest" });
+
+        return false;
+    }
 
     $.ajax({
         url: url,
@@ -147,37 +149,48 @@ form.onsubmit = async function (e) {
         contentType: false,
         success: function (data) {
 
-            //Clears inputs
-            let clearPostTitle = document.querySelector('input[name=Title]');
-            clearPostTitle.value = "";
+            //If runs from main page = /MyBlog/SavePost
+            //If runs from edit page = /MyBlog/SaveEditedPost
 
-            $(".SELECTmulti").val('').trigger('change');
+            if (url == "/MyBlog/SavePost") {
 
-            let clearPostContent = document.querySelector('.fr-element');
-            clearPostContent.innerHTML = "";
+                //Clears inputs
+                let clearPostTitle = document.querySelector('input[name=Title]');
+                clearPostTitle.value = "";
 
-            // Create a jQuery element from the data
-            const newPost = $(data);
+                $(".SELECTmulti").val('').trigger('change');
 
-            // Insert the new post at the top of the list
-            try {
-                $('#partialViewContainer').prepend(newPost);
+                let clearPostContent = document.querySelector('.fr-element');
+                clearPostContent.innerHTML = "";
 
-                // Scroll to post after a short delay to allow time for rendering
-                setTimeout(function () {
-                    let firstPostInList = document.querySelector('.displayPostCustomBox');
-                    firstPostInList.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" });
-                }, 100);
+                // Create a jQuery element from the data
+                const newPost = $(data);
+
+                // Insert the new post at the top of the list
+                try {
+                    $('#partialViewContainer').prepend(newPost);
+
+                    // Scroll to post after a short delay to allow time for rendering
+                    setTimeout(function () {
+                        let firstPostInList = document.querySelector('.displayPostCustomBox');
+                        firstPostInList.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" });
+                    }, 100);
 
 
-                if ($('#partialViewContainer .displayPostCustomBox').length > 3) {
+                    if ($('#partialViewContainer .displayPostCustomBox').length > 3) {
 
-                    $('#partialViewContainer .displayPostCustomBox').last().remove();
+                        $('#partialViewContainer .displayPostCustomBox').last().remove();
+                    }
+
+                } catch (error) {
+                    alert(error)
                 }
 
-            } catch (error) {
-                alert(error)
-            }
+            } else if (url == "/MyBlog/SaveEditedPost") {
+
+                //window.location.href = 'index';
+
+            };
 
         },
         error: function (xhr, status, error) {
@@ -185,6 +198,8 @@ form.onsubmit = async function (e) {
             alert('Error: ' + errorMessage);
             console.log(errorMessage);
         }
+
+
     });
 
     return false;

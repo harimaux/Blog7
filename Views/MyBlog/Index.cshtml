@@ -9,6 +9,8 @@
 
     <form method="POST" class="sendPostForm mb-5" asp-action="SavePost" enctype="multipart/form-data">
 
+        <input type="hidden" name="id" value="@Model.Post.Id" />
+
         <div asp-validation-summary="ModelOnly" class="text-danger"> </div>
 
         <!-- title input -->
@@ -121,6 +123,17 @@
     <script>
 
         var baseUrl = '@Url.Action("DeletePost", "MyBlog")';
+
+        //FROALA rich text editor
+        let editor = new FroalaEditor('#richTextEditor', {
+            heightMin: 300,
+
+        });
+
+        //Way of adding values in code
+        //editor.opts.height = 200;
+        //editor.size.refresh();
+
 
     </script>
 

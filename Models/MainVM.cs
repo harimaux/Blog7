@@ -23,7 +23,6 @@ namespace Blog7.Models
 
         public MainVM()
         {
-
             Post = new Post();
 
             UserExtraStuff = new UserExtraStuff();

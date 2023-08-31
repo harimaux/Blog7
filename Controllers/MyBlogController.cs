@@ -7,18 +7,19 @@ using System.Security.Claims;
 using Blog7.Models;
 using BlogService.DBmodels;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.EntityFrameworkCore;
 
 namespace Blog7.Controllers
 {
     public class MyBlogController : Controller
     {
 
-        private readonly ILogger<HomeController> _logger;
+        private readonly ILogger<MyBlogController> _logger;
         private readonly ApplicationDbContext _dbContext;
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
 
-        public MyBlogController(ILogger<HomeController> logger, ApplicationDbContext dbContext, UserManager<AppUser> userManager, SignInManager<AppUser> signInManager)
+        public MyBlogController(ILogger<MyBlogController> logger, ApplicationDbContext dbContext, UserManager<AppUser> userManager, SignInManager<AppUser> signInManager)
         {
             _logger = logger;
             _dbContext = dbContext;
@@ -79,7 +80,7 @@ namespace Blog7.Controllers
         }
 
 
-
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> SavePost(TextEditor formData)
         {
@@ -116,7 +117,7 @@ namespace Blog7.Controllers
             return PartialView("_Post", vm);
         }
 
-
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> DeletePost(int postId)
         {
@@ -145,7 +146,7 @@ namespace Blog7.Controllers
 
 
         [Authorize]
-        public IActionResult Edit(int editId)
+        public async Task<IActionResult> Edit(int editId)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var vm = new MainVM();
@@ -153,12 +154,12 @@ namespace Blog7.Controllers
             //Get post categories
             if (userId != null && _dbContext.PostCategory != null)
             {
-                vm.PostCategory = _dbContext.PostCategory.ToList();
+                vm.PostCategory = await _dbContext.PostCategory.ToListAsync();
             }
 
             if (_dbContext.Posts != null)
             {
-                var userPosts = _dbContext.Posts.Where(x => x.OwnerId == userId).ToList();
+                var userPosts = await _dbContext.Posts.Where(x => x.OwnerId == userId).ToListAsync();
 
                 foreach (var post in userPosts)
                 {
@@ -178,7 +179,7 @@ namespace Blog7.Controllers
         }
 
 
-        
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> SaveEditedPost(TextEditor formData, int id)
         {
@@ -194,7 +195,7 @@ namespace Blog7.Controllers
 
             if (_dbContext.Posts != null)
             {
-                var userPosts = _dbContext.Posts.Where(x => x.OwnerId == userId).ToList();
+                var userPosts = await _dbContext.Posts.Where(x => x.OwnerId == userId).ToListAsync();
 
                 var postToEdit = userPosts.Where(x => x.Id == id).First();
 

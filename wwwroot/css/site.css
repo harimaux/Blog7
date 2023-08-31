@@ -207,8 +207,12 @@ body {
     border-color: grey;
 }
 
-/* ------------------- LOGIN/REGISTER ------------------- */
+.myBlogCategoriesInPost {
+    width: 350px;
+    overflow: hidden;
+}
 
+/* ------------------- LOGIN/REGISTER ------------------- */
 .accountBackground {
     min-height: 100vh;
     background-image: url("/Images/Home/blog235266.jpg");
@@ -258,10 +262,6 @@ body {
     cursor: pointer;
 }
 
-.pickAv {
-}
-
-
 @media screen and (max-width: 768px){
 
     .choosenCustomAvatar {
@@ -284,17 +284,67 @@ body {
     color: var(--dark);
 }
 
+/* ------------------- EXPLORE ------------------- */
 
+.allCategoryImagesBox {
+    /*display: grid;
+    grid-template-columns: repeat(9, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+    grid-column-gap: 0px;
+    grid-row-gap: 0px;
+    justify-items: center;*/
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    grid-column-gap: 4px;
+    grid-row-gap: 4px;
+}
 
+.categoryImg {
+    overflow: hidden;
+    position: relative;
+    cursor: pointer;
+}
 
+.categoryImg div {
+  width: 100%;
+  height: 130px;
+  transition: all .5s ease-out;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
 
+.categoryImg:hover div {
+  transform: scale(1.04);
+  filter: brightness(0.3);
+}
 
+.categoryImgSpanLink {
+    display: none;
+    position: absolute;
+    color: white;
+    font-weight: bolder;
+    text-align: center;
+    top: 0;
+    margin-left: 50%;
+    margin-top: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+}
 
+.categoryImg:hover > .categoryImgSpanLink {
+    display: block;
+}
 
+.displayCategoryName {
+    font-family: 'Dancing Script', cursive;
+    display: flex;
+    justify-content: center;
+    font-size: 90px;
+}
 
 
 /* ---------------- LOADING SCREEN ---------------- */
-
 .lds-default {
     display: inline-block;
     position: relative;

@@ -14,7 +14,7 @@
                 {
                     var categoryIds = Model.Post.Category.Split(',').Select(x => x.Trim());
 
-                    <div class="d-flex">
+                    <div class="d-flex myBlogCategoriesInPost">
                         @foreach (var item in Model.PostCategory)
                         {
                             if (categoryIds.Contains(item.Id.ToString()))

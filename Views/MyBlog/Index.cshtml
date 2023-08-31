@@ -9,7 +9,7 @@
 
     <form method="POST" class="sendPostForm mb-5" asp-action="SavePost" enctype="multipart/form-data">
 
-        <input type="hidden" name="id" value="@Model.Post.Id" />
+        <input type="hidden" name="id"/>
 
         <div asp-validation-summary="ModelOnly" class="text-danger"> </div>
 

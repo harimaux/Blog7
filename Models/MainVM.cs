@@ -21,6 +21,8 @@ namespace Blog7.Models
         public int CurrentPage { get; set; }
         public int TotalPages { get; set; }
 
+        public string? PageCategoryId { get; set; }
+
         public MainVM()
         {
             Post = new Post();

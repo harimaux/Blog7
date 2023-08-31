@@ -1,0 +1,105 @@
+﻿@model Blog7.Models.MainVM
+
+<div class="container mt-5 mb-5 pb-2 pt-2 rounded-3 border" style="background-color: rgb(240, 240, 240)">
+
+    <h1>Explore</h1>
+
+    <div class="allCategoryImagesBox">
+        @if (Model.PostCategory != null)
+        {
+            string? imageName;
+            string? pathString;
+
+            @foreach (var image in Model.PostCategory)
+            {
+                imageName = image.CategoryName;
+                pathString = "/Images/Categories/" + image.CategoryName + ".jpg";
+
+                <div class="categoryImg">
+
+                    <div style="background-image:url('@pathString')" class="imageBackground" alt="@imageName" id="@image.Id"></div>
+
+                    <span class="categoryImgSpanLink">
+                        @imageName
+                    </span>
+
+                </div>
+
+            }
+        }
+    </div>
+
+    <h1 class="displayCategoryName">Category</h1>
+
+    <div id="partialViewContainer">
+
+
+    </div>
+
+
+    <partial name="_SearchResults" />
+
+
+</div>
+
+@section Scripts{
+
+    <script>
+
+        $(document).ready(function () {
+
+            const allImages = document.querySelector('.allCategoryImagesBox');
+            const categoryNameBox = document.querySelector('.displayCategoryName');
+
+            allImages.addEventListener('mouseover', (e) => {
+
+                if (e.target.matches('.imageBackground')) {
+
+                    const imgName = e.target.getAttribute('alt');
+                    categoryNameBox.innerHTML = `${imgName}`;
+
+                };
+
+            });
+
+            allImages.addEventListener('click', (e) => {
+
+                if (e.target.matches('.imageBackground')) {
+
+                    let imgId = e.target.getAttribute('id');
+                    let link = '@Url.Action("SearchPosts", "Explore")';
+                    let createUrl = link + `?categoryId=${imgId}`;
+
+                    $.ajax({
+                        url: createUrl,
+                        type: 'POST',
+                        success: function (data) {
+
+                            //Creates a jQuery element from the data
+                            const newPost = $(data);
+                            $('#partialViewContainer').html("");
+
+                            $('#partialViewContainer').prepend(newPost);
+
+                            let firstPostInList = document.querySelector('#partialViewContainer');
+                            firstPostInList.scrollIntoView({ behavior: "smooth", block: "start", inline: "nearest" });
+
+                        },
+                        error: function (xhr, status, error) {
+                            var errorMessage = xhr.responseText || 'An error occurred.';
+                            alert('Error: ' + errorMessage);
+                        }
+                    });
+                };
+
+            });
+        
+        });
+
+
+
+
+    </script>
+
+
+}

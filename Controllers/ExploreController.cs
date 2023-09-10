@@ -45,7 +45,7 @@ namespace Blog7.Controllers
 
                 if (TempData.ContainsKey("passModel"))
                 {
-                    vm = (MainVM)TempData["passModel"];
+                    vm = TempData["passModel"] as MainVM;
                     TempData.Remove("passModel");
                 }
             }
